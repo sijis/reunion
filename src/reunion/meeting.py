@@ -17,36 +17,22 @@ class Meeting:
         ]
 
         self._started = False
+        self._start_topic = None
+        self._start_action = None
 
     def parse(self, message):
 
         msg = self.message_parser(message)
+        self.keyword_parser(msg)
 
         if self._started:
             self.results['discussion'].append(msg.full_message)
 
-        if msg.action in self.keywords:
-            if '#startmeeting' == msg.action:
-                self._started = True
-                self.results['discussion'].append(msg.full_message)
+            if self._start_topic:
+                self.results['topics'][self._start_topic].append(msg.full_message)
 
-            if '#endmeeting' in msg.action:
-                self._started = False
-                return
-
-            if '#topic' == msg.action:
-
-                if msg.text in self.results['topics']:
-                    self.results['topics'][msg.text].append(msg.text)
-                else:
-                    self.results['topics'][msg.text] = []
-
-            if '#action' == msg.action:
-
-                if msg.username in self.results['actions']:
-                    self.results['actions'][msg.username].append(msg.text)
-                else:
-                    self.results['actions'][msg.username] = []
+            if self._start_action:
+                self.results['actions'][msg.username].append(msg.text)
 
     def message_parser(self, message):
         items = [
@@ -73,3 +59,23 @@ class Meeting:
 
         msg = Message(**m)
         return msg
+
+    def keyword_parser(self, msg):
+        if msg.action in self.keywords:
+            if '#startmeeting' == msg.action:
+                self._started = True
+                # self.results['discussion'].append(msg.full_message)
+
+            if '#endmeeting' in msg.action:
+                self._started = False
+                self.results['discussion'].append(msg.full_message)
+                return
+
+            if '#topic' == msg.action:
+                self._start_topic = msg.text
+                self.results['topics'][self._start_topic] = []
+
+            if '#action' == msg.action:
+                self._start_action = msg.text
+                # self.results['actions'][msg.username].append(msg.text)
+                self.results['actions'][msg.username] = []
