@@ -7,6 +7,7 @@ class Meeting:
             'discussion': [],
             'topics': {},
             'actions': {},
+            'users': {},
         }
 
         self.keywords = [
@@ -28,11 +29,22 @@ class Meeting:
         if self._started:
             self.results['discussion'].append(msg.full_message)
 
+            if msg.username not in self.results['users']:
+                self.results['users'][msg.username] = {
+                    'actions': [],
+                    'count': 0,
+                    'messages': [],
+                }
+
+            self.results['users'][msg.username]['count'] += 1
+            self.results['users'][msg.username]['messages'].append(msg.text)
+
             if self._start_topic and not msg.action:
                 self.results['topics'][self._start_topic].append(msg.full_message)
 
             if self._start_action:
                 self.results['actions'][msg.username].append(msg.text)
+                self.results['users'][msg.username]['actions'].append(msg.text)
 
         self._start_action = False
 
