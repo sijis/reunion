@@ -28,11 +28,11 @@ class Meeting:
         if self._started:
             self.results['discussion'].append(msg.full_message)
 
-            if self._start_topic:
+            if self._start_topic and not msg.action:
                 self.results['topics'][self._start_topic].append(msg.full_message)
 
-            if self._start_action:
-                self.results['actions'][msg.username].append(msg.text)
+            if self._start_action and not msg.action:
+                self.results['actions'][msg.username].append(msg.full_message)
 
     def message_parser(self, message):
         items = [
@@ -64,7 +64,6 @@ class Meeting:
         if msg.action in self.keywords:
             if '#startmeeting' == msg.action:
                 self._started = True
-                # self.results['discussion'].append(msg.full_message)
 
             if '#endmeeting' in msg.action:
                 self._started = False
@@ -77,5 +76,4 @@ class Meeting:
 
             if '#action' == msg.action:
                 self._start_action = msg.text
-                # self.results['actions'][msg.username].append(msg.text)
                 self.results['actions'][msg.username] = []
