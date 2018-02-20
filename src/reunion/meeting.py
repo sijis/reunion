@@ -37,14 +37,14 @@ class Meeting:
         self._start_action = False
 
     def message_parser(self, message):
-        items = [
+        attributes = [
             'username',
             'full_message',
             'action',
             'text',
         ]
 
-        Message = namedtuple('Message', items)
+        Message = namedtuple('Message', attributes)
         username, *full_message = message.split()
 
         if full_message[0] in self.keywords:
@@ -52,14 +52,14 @@ class Meeting:
         else:
             action, rest_message = None, full_message
 
-        m = {
+        parsed_message = {
             'username': username,
             'full_message': message,
             'action': action,
             'text': ' '.join(rest_message)
         }
 
-        msg = Message(**m)
+        msg = Message(**parsed_message)
         return msg
 
     def keyword_parser(self, msg):
