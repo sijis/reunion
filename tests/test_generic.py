@@ -10,6 +10,7 @@ BASIC_REUNION = [
     'user4: I am here too',
     'user1: #topic Topic1',
     'user3: I replied',
+    'user3: #action I will do that.',
     'user2: Another response',
     'user1: #topic Last Topic',
     'user3: Thank you',

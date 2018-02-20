@@ -31,8 +31,10 @@ class Meeting:
             if self._start_topic and not msg.action:
                 self.results['topics'][self._start_topic].append(msg.full_message)
 
-            if self._start_action and not msg.action:
-                self.results['actions'][msg.username].append(msg.full_message)
+            if self._start_action:
+                self.results['actions'][msg.username].append(msg.text)
+
+        self._start_action = False
 
     def message_parser(self, message):
         items = [
@@ -75,5 +77,6 @@ class Meeting:
                 self.results['topics'][self._start_topic] = []
 
             if '#action' == msg.action:
-                self._start_action = msg.text
-                self.results['actions'][msg.username] = []
+                self._start_action = True
+                if msg.username not in self.results['actions']:
+                    self.results['actions'][msg.username] = []
