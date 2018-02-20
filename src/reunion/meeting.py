@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 class Meeting:
 
     def __init__(self):
@@ -18,33 +20,50 @@ class Meeting:
 
     def parse(self, message):
 
-        username, *full_message = message.split()
-        action, *rest_message = full_message
-        nice_message = ' '.join(rest_message)
+        msg = self.message_parser(message)
 
-        if action in self.keywords:
-            if '#startmeeting' == action:
+        if msg.action in self.keywords:
+            if '#startmeeting' == msg.action:
                 self._started = True
 
-            if '#endmeeting' in action:
+            if '#endmeeting' in msg.action:
                 self._started = False
                 return
 
-            self.results['discussion'].append(message)
+            self.results['discussion'].append(msg.full_message)
 
-            if '#topic' == action:
+            if '#topic' == msg.action:
 
-                if nice_message in self.results['topics']:
-                    self.results['topics'][nice_message].append(nice_message)
+                if msg.text in self.results['topics']:
+                    self.results['topics'][msg.text].append(msg.text)
                 else:
-                    self.results['topics'][nice_message] = []
+                    self.results['topics'][msg.text] = []
 
-            if '#action' == action:
+            if '#action' == msg.action:
 
-                if nice_message in self.results['actions']:
-                    self.results['actions'][username].append(nice_message)
+                if msg.username in self.results['actions']:
+                    self.results['actions'][msg.username].append(msg.text)
                 else:
-                    self.results['actions'][username] = []
+                    self.results['actions'][msg.username] = []
 
     def message_parser(self, message):
-        return message
+        items = [
+            'username',
+            'full_message',
+            'action',
+            'text',
+        ]
+
+        Message = namedtuple('Message', items)
+        username, *full_message = message.split()
+        action, *rest_message = full_message
+
+        m = {
+            'username': username,
+            'full_message': message,
+            'action': action,
+            'text': ' '.join(rest_message)
+        }
+
+        msg = Message(**m)
+        return msg
