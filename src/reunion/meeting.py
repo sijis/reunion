@@ -58,7 +58,11 @@ class Meeting:
 
         Message = namedtuple('Message', items)
         username, *full_message = message.split()
-        action, *rest_message = full_message
+
+        if full_message[0] in self.keywords:
+            action, *rest_message = full_message
+        else:
+            action, rest_message = None, full_message
 
         m = {
             'username': username,
