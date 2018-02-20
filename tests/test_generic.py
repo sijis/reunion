@@ -11,12 +11,13 @@ BASIC_REUNION = [
     'user1: #topic Topic1',
     'user3: I replied',
     'user2: Another response',
-    'user1: #topic End Topic',
+    'user1: #topic Last Topic',
     'user3: Thank you',
     'user5: Adios',
     'user2: #action Action must be taken',
     'user2: #action Another action must be taken',
     'user1: #endmeeting',
+    'user4: last message',
 ]
 
 def test_parse():
@@ -28,4 +29,6 @@ def test_parse():
     assert type(meeting.results) == dict
     assert 'actions' in meeting.results
     assert 'topics' in meeting.results
-    print(meeting.results)
+
+    import pprint
+    pprint.pprint(meeting.results)
