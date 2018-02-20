@@ -54,6 +54,7 @@ class Meeting:
             'full_message',
             'action',
             'text',
+            'channel',
         ]
 
         Message = namedtuple('Message', attributes)
@@ -68,7 +69,8 @@ class Meeting:
             'username': username,
             'full_message': message,
             'action': action,
-            'text': ' '.join(rest_message)
+            'text': ' '.join(rest_message),
+            'channel': 'text_channel',
         }
 
         msg = Message(**parsed_message)
