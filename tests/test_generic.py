@@ -29,6 +29,7 @@ def test_parse():
     assert type(meeting.results) == dict
     assert 'actions' in meeting.results
     assert 'topics' in meeting.results
+    assert meeting.results['discussion'] == BASIC_REUNION[1:-1]
 
     import pprint
     pprint.pprint(meeting.results)

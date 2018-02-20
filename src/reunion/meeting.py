@@ -22,15 +22,17 @@ class Meeting:
 
         msg = self.message_parser(message)
 
+        if self._started:
+            self.results['discussion'].append(msg.full_message)
+
         if msg.action in self.keywords:
             if '#startmeeting' == msg.action:
                 self._started = True
+                self.results['discussion'].append(msg.full_message)
 
             if '#endmeeting' in msg.action:
                 self._started = False
                 return
-
-            self.results['discussion'].append(msg.full_message)
 
             if '#topic' == msg.action:
 
