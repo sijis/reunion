@@ -1,9 +1,12 @@
+"""A library that captures a meeting notes, similar to Meetbot."""
 from collections import namedtuple
 
 
 class Meeting:
+    """Capture and parses meetings."""
 
     def __init__(self):
+        """Initial."""
         self.results = {
             'discussion': [],
             'topics': {},
@@ -25,7 +28,12 @@ class Meeting:
         self._start_action = None
 
     def parse(self, message):
+        """Parse meeting lines.
 
+        Args:
+            message (str): Conversation text.
+
+        """
         msg = self.message_parser(message)
         self.keyword_parser(msg)
 
@@ -56,6 +64,15 @@ class Meeting:
         self._start_info = False
 
     def message_parser(self, message):
+        """Parse meeting lines into consumable attributes.
+
+        Args:
+            message (str): Conversation text.
+
+        Returns:
+            Message: A message object with attributes.
+
+        """
         attributes = [
             'username',
             'full_message',
@@ -84,6 +101,12 @@ class Meeting:
         return msg
 
     def keyword_parser(self, msg):
+        """Prepare and update Meeting attributes.
+
+        Args:
+            msg (Message): Conversation text.
+
+        """
         if msg.action in self.keywords:
             if msg.action == '#startmeeting':
                 self._started = True
