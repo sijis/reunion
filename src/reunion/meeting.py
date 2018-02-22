@@ -1,5 +1,6 @@
 from collections import namedtuple
 
+
 class Meeting:
 
     def __init__(self):
@@ -63,7 +64,7 @@ class Meeting:
             'channel',
         ]
 
-        Message = namedtuple('Message', attributes)
+        message_obj = namedtuple('Message', attributes)
         username, *full_message = message.split()
 
         if full_message[0] in self.keywords:
@@ -79,12 +80,12 @@ class Meeting:
             'channel': 'text_channel',
         }
 
-        msg = Message(**parsed_message)
+        msg = message_obj(**parsed_message)
         return msg
 
     def keyword_parser(self, msg):
         if msg.action in self.keywords:
-            if '#startmeeting' == msg.action:
+            if msg.action == '#startmeeting':
                 self._started = True
 
             if '#endmeeting' in msg.action:
@@ -92,14 +93,14 @@ class Meeting:
                 self.results['discussion'].append(msg.full_message)
                 return
 
-            if '#topic' == msg.action:
+            if msg.action == '#topic':
                 self._start_topic = msg.text
-                self.results['topics'][self._start_topic] = {'discussion': [], 'info': [],}
+                self.results['topics'][self._start_topic] = {'discussion': [], 'info': [], }
 
-            if '#info' == msg.action:
+            if msg.action == '#info':
                 self._start_info = True
 
-            if '#action' == msg.action:
+            if msg.action == '#action':
                 self._start_action = True
                 if msg.username not in self.results['actions']:
                     self.results['actions'][msg.username] = []
