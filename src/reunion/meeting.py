@@ -90,7 +90,7 @@ class Meeting:
             action, rest_message = None, full_message
 
         parsed_message = {
-            'username': username,
+            'username': username[:-1],
             'full_message': message,
             'action': action,
             'text': ' '.join(rest_message),
