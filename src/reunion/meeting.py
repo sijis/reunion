@@ -32,11 +32,11 @@ class Meeting:
             if msg.username not in self.results['users']:
                 self.results['users'][msg.username] = {
                     'actions': [],
-                    'count': 0,
+                    'message_count': 0,
                     'messages': [],
                 }
 
-            self.results['users'][msg.username]['count'] += 1
+            self.results['users'][msg.username]['message_count'] += 1
             self.results['users'][msg.username]['messages'].append(msg.text)
 
             if self._start_topic and not msg.action:
