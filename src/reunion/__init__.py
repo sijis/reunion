@@ -1,2 +1,1 @@
-
 from .meeting import Meeting

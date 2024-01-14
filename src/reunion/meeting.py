@@ -8,19 +8,21 @@ class Meeting:
     def __init__(self):
         """Initial."""
         self.results = {
-            'discussion': [],
-            'topics': {},
-            'actions': {},
-            'users': {},
+            "discussion": [],
+            "topics": {},
+            "actions": {},
+            "users": {},
         }
 
         self.keywords = [
-            '#startmeeting',
-            '#topic',
-            '#action',
-            '#info',
-            '#endmeeting',
+            "#startmeeting",
+            "#topic",
+            "#action",
+            "#info",
+            "#endmeeting",
         ]
+
+        self.username_marker = ":"
 
         self._started = False
         self._start_topic = None
@@ -34,31 +36,37 @@ class Meeting:
             message (str): Conversation text.
 
         """
+        message = message.strip()
+        if not message:
+            return
+
         msg = self.message_parser(message)
         self.keyword_parser(msg)
 
         if self._started:
-            self.results['discussion'].append(msg.full_message)
+            self.results["discussion"].append(msg.full_message)
 
-            if msg.username not in self.results['users']:
-                self.results['users'][msg.username] = {
-                    'actions': [],
-                    'message_count': 0,
-                    'messages': [],
+            if msg.username not in self.results["users"]:
+                self.results["users"][msg.username] = {
+                    "actions": [],
+                    "message_count": 0,
+                    "messages": [],
                 }
 
-            self.results['users'][msg.username]['message_count'] += 1
-            self.results['users'][msg.username]['messages'].append(msg.text)
+            self.results["users"][msg.username]["message_count"] += 1
+            self.results["users"][msg.username]["messages"].append(msg.text)
 
             if self._start_topic and not msg.action:
-                self.results['topics'][self._start_topic]['discussion'].append(msg.full_message)
+                self.results["topics"][self._start_topic]["discussion"].append(
+                    msg.full_message
+                )
 
             if self._start_info and self._start_topic:
-                self.results['topics'][self._start_topic]['info'].append(msg.text)
+                self.results["topics"][self._start_topic]["info"].append(msg.text)
 
             if self._start_action:
-                self.results['actions'][msg.username].append(msg.text)
-                self.results['users'][msg.username]['actions'].append(msg.text)
+                self.results["actions"][msg.username].append(msg.text)
+                self.results["users"][msg.username]["actions"].append(msg.text)
 
         self._start_action = False
         self._start_info = False
@@ -74,15 +82,16 @@ class Meeting:
 
         """
         attributes = [
-            'username',
-            'full_message',
-            'action',
-            'text',
-            'channel',
+            "username",
+            "full_message",
+            "action",
+            "text",
+            "channel",
         ]
 
-        message_obj = namedtuple('Message', attributes)
-        username, *full_message = message.split()
+        message_obj = namedtuple("Message", attributes)
+        username, _, full_message = message.partition(self.username_marker)
+        full_message = full_message.strip().split()
 
         if full_message[0] in self.keywords:
             action, *rest_message = full_message
@@ -90,11 +99,11 @@ class Meeting:
             action, rest_message = None, full_message
 
         parsed_message = {
-            'username': username[:-1],
-            'full_message': message,
-            'action': action,
-            'text': ' '.join(rest_message),
-            'channel': 'text_channel',
+            "username": username,
+            "full_message": message,
+            "action": action,
+            "text": " ".join(rest_message),
+            "channel": "text_channel",
         }
 
         msg = message_obj(**parsed_message)
@@ -108,22 +117,25 @@ class Meeting:
 
         """
         if msg.action in self.keywords:
-            if msg.action == '#startmeeting':
+            if msg.action == "#startmeeting":
                 self._started = True
 
-            if '#endmeeting' in msg.action:
+            if "#endmeeting" in msg.action:
                 self._started = False
-                self.results['discussion'].append(msg.full_message)
+                self.results["discussion"].append(msg.full_message)
                 return
 
-            if msg.action == '#topic':
+            if msg.action == "#topic":
                 self._start_topic = msg.text
-                self.results['topics'][self._start_topic] = {'discussion': [], 'info': [], }
+                self.results["topics"][self._start_topic] = {
+                    "discussion": [],
+                    "info": [],
+                }
 
-            if msg.action == '#info':
+            if msg.action == "#info":
                 self._start_info = True
 
-            if msg.action == '#action':
+            if msg.action == "#action":
                 self._start_action = True
-                if msg.username not in self.results['actions']:
-                    self.results['actions'][msg.username] = []
+                if msg.username not in self.results["actions"]:
+                    self.results["actions"][msg.username] = []
