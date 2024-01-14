@@ -22,6 +22,8 @@ class Meeting:
             "#endmeeting",
         ]
 
+        self.username_marker = ":"
+
         self._started = False
         self._start_topic = None
         self._start_info = None
@@ -84,7 +86,8 @@ class Meeting:
         ]
 
         message_obj = namedtuple("Message", attributes)
-        username, *full_message = message.split()
+        username, _, full_message = message.partition(self.username_marker)
+        full_message = full_message.strip().split()
 
         if full_message[0] in self.keywords:
             action, *rest_message = full_message
@@ -92,7 +95,7 @@ class Meeting:
             action, rest_message = None, full_message
 
         parsed_message = {
-            "username": username[:-1],
+            "username": username,
             "full_message": message,
             "action": action,
             "text": " ".join(rest_message),
