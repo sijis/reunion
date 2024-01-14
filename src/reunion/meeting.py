@@ -36,6 +36,10 @@ class Meeting:
             message (str): Conversation text.
 
         """
+        message = message.strip()
+        if not message:
+            return
+
         msg = self.message_parser(message)
         self.keyword_parser(msg)
 
