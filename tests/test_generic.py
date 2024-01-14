@@ -1,5 +1,3 @@
-import reunion
-
 BASIC_REUNION = [
     "user1: finishing some text",
     "user1: #startmeeting",
@@ -22,8 +20,7 @@ BASIC_REUNION = [
 ]
 
 
-def test_parse():
-    meeting = reunion.Meeting()
+def test_parse(meeting):
     for text in BASIC_REUNION:
         meeting.parse(text)
 
@@ -32,7 +29,3 @@ def test_parse():
     assert "topics" in meeting.results
     assert "users" in meeting.results
     assert meeting.results["discussion"] == BASIC_REUNION[1:-1]
-
-    import pprint
-
-    pprint.pprint(meeting.results)
